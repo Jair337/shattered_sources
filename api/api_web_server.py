@@ -4,12 +4,12 @@ from flask import Flask, render_template
 from api.routes.ask import ask_service
 from database.connection_interact_db import create_load_test_data_seerist
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='./html_templates')
 
 ## PATHS
 @app.route('/')
 def hello():
-    return render_template("index.html")
+    return render_template("html_template_home.html")
 
 @app.route('/ask')
 def ask_route():
@@ -17,7 +17,7 @@ def ask_route():
 @app.route('/insert_data')
 def insert_data():
     create_load_test_data_seerist()
-    return
+    return "yay"
 
 if __name__ == '__main__':
     app.run(debug=True)
