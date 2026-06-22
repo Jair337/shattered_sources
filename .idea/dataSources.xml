@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:C:\Users\31640\PycharmProjects\shattered_sources\database\events_seerist_raw.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="events_normalized.db" uuid="51dcd3e0-c52c-4f0a-8829-4b934a902ab0">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\31640\PycharmProjects\shattered_sources\database\events_normalized.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

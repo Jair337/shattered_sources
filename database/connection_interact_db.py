@@ -104,7 +104,27 @@ def create_load_test_data_seerist():
 
     print(f"{len(processed_records)} records written to {path_db}")
 
+def create_normalized_db():
+    conn = sqlite3.connect(db_path_seerist)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS events_normalized (
+        normalized_event_id TEXT PRIMARY KEY,
+        original_event_id TEXT,
+        source_name TEXT,
+        event_type TEXT,
+        title TEXT,
+        description TEXT,
+        category TEXT,
+        severity INTEGER,
+        confidence INTEGER,
+        time_stamp DATETIME,
+        country TEXT,
+        region TEXT,
+        city TEXT,
+        latitude FLOAT,
+        longitude FLOAT)''')
+    conn.commit()
+    conn.close()
 
-
-
+create_normalized_db()
 ## MUST WRITE CODE THAT PULLS NEW ALERTS EVERY N SECONDS AND ADDS THEM TO DB --> NEW ALERTS -- PLOTTED AGAINST MODEL --> ADDED TO MAIN DB WITH EITHER REQUIRES ATTENTION OR NOT
