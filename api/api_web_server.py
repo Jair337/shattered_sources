@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
+import json
 
 ## All service or other modules imports
 from api.routes.ask import ask_service
 from database.connection_interact_db import create_load_test_data_seerist
 from services.normalization_service import *
+from services.ingest_service import *
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -23,13 +25,18 @@ def insert_data():
 
 
 @app.route('/normalize_ingest_seerist', methods=['POST']) ## Logic that normalizes and ingests the seerist data into the normalized db, and saves a copy of the raw data to raw seerist events
-def ingest_seerist():
+def ingest_seerist_api():
+
     raw_data = request.get_json()
+    result = ingest_seerist(raw_data)
 
-    ingest_seerist(raw_data)
+    if result[0] == 'Success':
+        return jsonify(result)
+
+    else:
+        return "error"
 
 
-    return "Event normalized and ingested successfully"
 
 if __name__ == '__main__':
     app.run(debug=True)
