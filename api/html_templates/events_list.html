@@ -43,9 +43,9 @@ Implement the following specifications exactly:
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shattered Sources - Incident Feed</title>
+    <title>ING Incident Feed</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #1a252f; color: #ecf0f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        body { margin: 0; padding: 0; background-color: #1a252f; color: #daf2f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; display: flex; flex-direction: column; }
         header { background-color: #111a22; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2c3e50; }
         h1 { margin: 0; font-size: 20px; letter-spacing: 1px; color: #3498db; }
         
@@ -80,8 +80,8 @@ Implement the following specifications exactly:
 <body>
 
     <header>
-        <h1>Shattered Sources // Consolidated Intelligence Feed</h1>
-        <div style="font-size: 13px; color: #95a5a6;">Active Master Records: {{ events|length }}</div>
+        <h1>ING Intel feed</h1>
+        <div style="font-size: 13px; color: #95a5a6;">Total records: {{ events|length }}</div>
     </header>
 
     <div class="dashboard-container">
@@ -106,7 +106,7 @@ Implement the following specifications exactly:
 
         <div class="detail-pane" id="detailInspector">
             <div class="empty-state" id="emptyState">
-                Select an event from the operational feed pane to inspect full record matrices.
+                Select an event to inspect.
             </div>
 
             <div id="detailContent" style="display: none;">
@@ -118,7 +118,7 @@ Implement the following specifications exactly:
                     <h2 id="detTitle" style="margin: 10px 0 0 0; font-size: 24px; color: #ffffff;"></h2>
                 </div>
 
-                <h3 style="color: #3498db; font-size: 14px; text-transform: uppercase;">Analytical Summary</h3>
+                <h3 style="color: #3498db; font-size: 14px; text-transform: uppercase;">Summary</h3>
                 <p id="detDesc" style="line-height: 1.6; font-size: 16px; color: #ecf0f1; background-color: #22313f; padding: 20px; border-radius: 4px;"></p>
 
                 <div class="info-grid">

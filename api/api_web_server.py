@@ -49,7 +49,7 @@ def list_events():
         ## Builds the columns as list
         columns = [desc[0] for desc in cursor.description]
 
-        ## Turns every tuple row into dict, using the defined columns
+        ## Turns every tuple row into dict, using the columns
         events = [dict(zip(columns, row)) for row in raw_rows]
 
     return render_template("events_list.html", events=events)
@@ -61,11 +61,19 @@ def show_location_map():
     ## however AI was used for the HTML part and the parts surrounding the logic that creates the map.
     lat = request.args.get('lat')
     lng = request.args.get('lon')
-    event_title = request.args.get('event_title')
+    event_title = request.args.get('title')
+
+    custom_popup = folium.Popup(
+        html=f"<b>{event_title}</b>",
+        max_width=450)
 
     m = folium.Map(location=[float(lat), float(lng)], zoom_start=11, tiles='CartoDB.Positron')
-    folium.Marker(location=[float(lat), float(lng)], tooltip='Click for more info', popup=event_title,
-                  icon=folium.Icon(color="red")).add_to(m)
+    (folium.Marker(location=[float(lat), float(lng)],
+                  tooltip='Click for more info',
+                  popup=custom_popup,
+                  icon=folium.Icon(color="red")
+                   ) .add_to(m))
+
     return m._repr_html_()
 
 @app.route('/test_folium')
