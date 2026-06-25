@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import json
+import folium
 
 ## All service or other modules imports
 from api.routes.ask import ask_service
@@ -36,7 +37,43 @@ def ingest_seerist_api():
     else:
         return "error"
 
+@app.route('/events_list')
+## Pulls all events from normalized DB and puts them into a interactive list
+def list_events():
+    ## Currently comes into the logic as DB tuple, needs to be dict for list
+    with sqlite3.connect(db_path_normalized) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM events_normalized ORDER BY time_stamp DESC")
+        raw_rows = cursor.fetchall()
 
+        ## Builds the columns as list
+        columns = [desc[0] for desc in cursor.description]
+
+        ## Turns every tuple row into dict, using the defined columns
+        events = [dict(zip(columns, row)) for row in raw_rows]
+
+    return render_template("events_list.html", events=events)
+
+@app.route('/map/inspect')
+def show_location_map():
+    ## Pulls events from normalized DB and puts them into a interactive map.
+    ## NOTE = The logic here and in the HTML file is written by me,
+    ## however AI was used for the HTML part and the parts surrounding the logic that creates the map.
+    lat = request.args.get('lat')
+    lng = request.args.get('lon')
+    event_title = request.args.get('event_title')
+
+    m = folium.Map(location=[float(lat), float(lng)], zoom_start=11, tiles='CartoDB.Positron')
+    folium.Marker(location=[float(lat), float(lng)], tooltip='Click for more info', popup=event_title,
+                  icon=folium.Icon(color="red")).add_to(m)
+    return m._repr_html_()
+
+@app.route('/test_folium')
+def test_folium():
+    m = folium.Map(location=[51.96246, 4.52925], zoom_start=11, tiles='CartoDB.Positron')
+    folium.Marker(location=[51.96246, 4.52925], tooltip='Click for more info', popup='Event name',
+                  icon=folium.Icon(color="red")).add_to(m)
+    return m._repr_html_()
 
 if __name__ == '__main__':
     app.run(debug=True)

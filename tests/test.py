@@ -11,7 +11,7 @@ from sklearn.metrics import roc_auc_score, f1_score, precision_score, recall_sco
 # 1. LOAD THE DATA
 # ==========================================
 print("Loading data...")
-with open('synthetic_seerist_events.json', 'r') as f:
+with open('../synthetic_seerist_events.json', 'r') as f:
     data = json.load(f)
 
 # pd.json_normalize flattens nested JSON (e.g., 'impact.likely_disruption')
