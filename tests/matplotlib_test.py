@@ -1,33 +1,50 @@
 import matplotlib.pyplot as plt
 import sqlite3
 from config import db_path_normalized
+from matplotlib.ticker import MaxNLocator
 
-def time_charts_service():
+
+
+def severity_waveform_service():
     with sqlite3.connect(db_path_normalized) as conn:
         cursor = conn.cursor()
+        ## Selects all the dates and severities and counts them, then groups by date and severity tier
+        cursor.execute('''
+                       SELECT STRFTIME('%Y-%m-%d', time_stamp) AS date,
+                        CASE 
+                            WHEN severity >= 4 THEN 'High'
+                            WHEN severity = 3 THEN 'Medium'
+                            ELSE 'Low'
+                       END
+                           
+                       AS severity_tier,
+                        COUNT(*) AS count
+                        
+                    FROM events_normalized
+                    GROUP BY date, severity_tier
+                    ORDER BY date ASC
+                       ''')
 
-        ## Pulls all the needed data from the db, STRFTIME slices off everything but the date from the event.
-        ## Then it groups the events by date and counts how many events happened on that date.
-        cursor.execute('''SELECT STRFTIME ('%Y-%m-%d', time_stamp) AS date, COUNT(*) AS event_count FROM events_normalized GROUP BY date''')
-        data = cursor.fetchall()
+        raw_data = cursor.fetchall()
 
-        ## Split the data into 2 lists to plot it
-        dates = [row[0] for row in data]
-        event_counts = [row[1] for row in data]
+        ## Makes a dict with the dates as keys and the severity counts as values, filling in missing severity tiers with 0
+        data = {}
+        for date, tier, count in raw_data:
+            if date not in data:
+                data[date] = {"low": 0, "medium": 0, "high": 0}
+            data[date][tier.lower()] = count
 
-        fig,ax = plt.subplots(facecolor = '#0a1118')
-        ax.set_facecolor('#111e2e')
+        ## Sets the values for the graph
+        x_axis = list(data.keys())
+        y_axis_low = [data[date]["low"] for date in x_axis]
+        y_axis_medium = [data[date]["medium"] for date in x_axis]
+        y_axis_high = [data[date]["high"] for date in x_axis]
 
-        ax.plot(dates, event_counts, color='#FF6600', marker='o', linestyle='-', markersize=4, markerfacecolor='white', linewidth=1)
-        ax.grid(color='gray', linestyle='--', linewidth=0.3)
-        ax.set_title('Event count daily', color='white')
-        ax.set_xlabel('Date', color='white')
-        ax.set_ylabel('Event Count', color='white')
-        ax.tick_params(axis='x', rotation=70, colors='white')
-        for spine in ax.spines:
-            ax.spines[spine].set_visible(False)
-        ax.xaxis.set_major_locator(plt.MaxNLocator(15))  # Show only 15 x-ticks to avoid clutter
+        plt.stackplot(x_axis, y_axis_low, y_axis_medium, y_axis_high)
+        plt.show()
 
-        fig.tight_layout()
 
-    return fig
+    #fig.tight_layout()
+    #fig.show()
+
+severity_waveform_service()

@@ -51,3 +51,6 @@ def time_charts_event_count_memory():
     plt.close(fig)
     chart_b64 = base64.b64encode(img_buffer_event_count.getvalue()).decode('utf_8')
     return chart_b64
+
+
+
