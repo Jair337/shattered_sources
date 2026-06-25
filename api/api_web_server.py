@@ -9,6 +9,7 @@ from database.connection_interact_db import create_load_test_data_seerist
 from services.normalization_service import *
 from services.ingest_service import *
 from services.map_all_events_service import *
+from services.stats_services.macro_stats_service import macro_stats_service
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -87,6 +88,14 @@ def show_location_map():
 
     return m._repr_html_()
 
+@app.route('/stats/macro')
+def macro_stats():
+    return macro_stats_service()
+
+
+@app.route('/stats')
+def stats():
+    return render_template("stats.html")
 @app.route('/test_folium')
 def test_folium():
     m = folium.Map(location=[20, 0], zoom_start=2, tiles='CartoDB.Positron')

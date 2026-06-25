@@ -33,36 +33,28 @@
             text-decoration: none;
             transition: background-color 0.2s;
         }
+
         .btn:hover {
             background-color: #2980b9;
         }
         .button-container {
             margin: 15px;
         }
+
     </style>
 </head>
 <body>
 
-    <h1>ING intel dashboard</h1>
-    <p>Welcome to the intel dashboard</p>
+    <h1>Macro stats page</h1>
+    <p>Welcome to the macro stats page</p>
 
-    <div class="button-container">
-        <form action="{{ url_for('render_map_events_endpoint') }}" method="GET">
-            <button type="submit" class="btn">Events map</button>
-        </form>
-    </div>
+    <p>Total events: {{total_volume}} </p>
+    <p>Percentage of events with severity >= 4: {{threat_percentage}}%</p>
+    <p>Amount of unique cities: {{unique_cities}}</p>
 
-    <div class="button-container">
-        <form action="{{ url_for('list_events') }}" method="GET">
-            <button type="submit" class="btn">Events list</button>
-        </form>
-    </div>
-
-    <div class="button-container">
-        <form action="{{ url_for('stats') }}" method="GET">
-            <button type="submit" class="btn">Stats page</button>
-        </form>
-    </div>
+<div class="button-container">
+    <a href="/stats" class="btn" style="background-color: coral; border-color: black">Back to stats page</a>
+</div>
 
 
     </body>
