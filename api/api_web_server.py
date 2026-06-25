@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import folium
+from fontTools.misc.cython import returns
 
 ## All service or other modules imports
 from api.routes.ask import ask_service
 from database.connection_interact_db import create_load_test_data_seerist
 from services.normalization_service import *
 from services.ingest_service import *
+from services.map_all_events_service import *
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -22,6 +24,15 @@ def ask_route():
 def insert_data():
     create_load_test_data_seerist()
     return "yay"
+
+
+
+@app.route("/map/events")
+def render_map_events_endpoint():
+    ## Pulls events from normalized DB and puts them into a interactive map.
+    return render_map_events()
+
+
 
 
 
@@ -78,9 +89,8 @@ def show_location_map():
 
 @app.route('/test_folium')
 def test_folium():
-    m = folium.Map(location=[51.96246, 4.52925], zoom_start=11, tiles='CartoDB.Positron')
-    folium.Marker(location=[51.96246, 4.52925], tooltip='Click for more info', popup='Event name',
-                  icon=folium.Icon(color="red")).add_to(m)
+    m = folium.Map(location=[20, 0], zoom_start=2, tiles='CartoDB.Positron')
+
     return m._repr_html_()
 
 if __name__ == '__main__':
