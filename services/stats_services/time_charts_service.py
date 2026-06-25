@@ -1,4 +1,7 @@
+import base64
 import io
+from encodings import utf_8
+
 import matplotlib.pyplot as plt
 import sqlite3
 from config import db_path_normalized
@@ -46,4 +49,5 @@ def time_charts_event_count_memory():
     fig.savefig(img_buffer_event_count, format='png')
     img_buffer_event_count.seek(0)
     plt.close(fig)
-    return img_buffer_event_count
+    chart_b64 = base64.b64encode(img_buffer_event_count.getvalue()).decode('utf_8')
+    return chart_b64
