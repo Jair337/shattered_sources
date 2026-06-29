@@ -15,9 +15,8 @@ def custom_time_chart_service(selected_country):
         cursor.execute('''SELECT DISTINCT country FROM events_normalized ORDER BY country ASC ''')
         countries = [row[0] for row in cursor.fetchall()]
 
-        cursor.execute('''SELECT STRFTIME('%Y-%m-%d', time_stamp) AS date, COUNT(*) AS event_count FROM events_normalized WHERE country = ? ORDER BY date ASC''', (selected_country,))
+        cursor.execute('''SELECT STRFTIME('%Y-%m-%d', time_stamp) AS date, COUNT(*) AS event_count FROM events_normalized WHERE country = ? GROUP BY date ORDER BY date ASC''', (selected_country,))
         data = cursor.fetchall()
-        print(data)
 
         ## Split the data into 2 lists to plot it
         dates = [row[0] for row in data]
@@ -46,5 +45,4 @@ def custom_time_chart_service(selected_country):
         img_buffer_event_count.seek(0)
         plt.close(fig)
         chart_b64 = base64.b64encode(img_buffer_event_count.getvalue()).decode('utf_8')
-        print(countries)
         return chart_b64, countries, selected_country
