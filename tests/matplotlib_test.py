@@ -40,8 +40,25 @@ def severity_waveform_service():
         y_axis_medium = [data[date]["medium"] for date in x_axis]
         y_axis_high = [data[date]["high"] for date in x_axis]
 
-        plt.stackplot(x_axis, y_axis_low, y_axis_medium, y_axis_high)
-        plt.show()
+        ## All of the parameters for the plot
+        fig, ax = plt.subplots(facecolor='#0a1118')
+
+        ax.set_facecolor('#111e2e')
+        ax.stackplot(x_axis, y_axis_low, y_axis_medium, y_axis_high, colors=['#1c3d5a', '#334e68', '#FF6600'], linewidth=1)
+        ax.grid(color='gray', linestyle='--', linewidth=0.3)
+        ax.set_title('Event count daily', color='white')
+        ax.set_xlabel('Date', color='white')
+        ax.set_ylabel('Event Count', color='white')
+        ax.tick_params(axis='x', rotation=70, colors='white')
+        ax.tick_params(axis='y', colors='white', labelleft=True)
+        for spine in ax.spines:
+            ax.spines[spine].set_visible(False)
+        ax.xaxis.set_major_locator(plt.MaxNLocator(15))
+        ax.yaxis.set_major_locator(plt.MaxNLocator(10))
+
+        fig.tight_layout()
+
+        return fig
 
 
     #fig.tight_layout()

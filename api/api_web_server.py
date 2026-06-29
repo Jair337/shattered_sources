@@ -9,7 +9,7 @@ from services.normalization_service import *
 from services.ingest_service import *
 from services.map_all_events_service import *
 from services.stats_services.macro_stats_service import macro_stats_service
-from services.stats_services.time_charts_service import time_charts_event_count_service, time_charts_event_count_memory
+from services.stats_services.time_charts_service import time_charts_event_count_memory, time_charts_stacked_volumes
 from services.list_events_service import list_events_service
 from services.show_location_map_service import show_location_map_service
 
@@ -71,9 +71,7 @@ def macro_stats():
 
 @app.route('/stats/time_charts')
 def time_charts():
-    time_chart_event_count = time_charts_event_count_memory()
-
-    return render_template("time_charts.html", time_chart_event_count=time_chart_event_count)
+    return render_template("time_charts.html", time_chart_event_count=time_charts_event_count_memory(), time_chart_stacked_volumes=time_charts_stacked_volumes())
 
 
 
