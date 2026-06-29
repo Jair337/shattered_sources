@@ -13,6 +13,7 @@ from services.stats_services.time_charts_service import time_charts_event_count_
 from services.list_events_service import list_events_service
 from services.show_location_map_service import show_location_map_service
 from services.stats_services.custom_time_charts_service import custom_time_chart_service
+from services.map_choropleth_service import generate_choropleth_map
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -36,7 +37,9 @@ def render_map_events_endpoint():
     ## Pulls events from normalized DB and puts them into a interactive map.
     return render_map_events()
 
-
+@app.route("/map/choropleth")
+def render_map_choropleth():
+    return generate_choropleth_map()
 
 @app.route('/normalize_ingest_seerist', methods=['POST']) ## Logic that normalizes and ingests the seerist data into the normalized db, and saves a copy of the raw data to raw seerist events
 def ingest_seerist_api():

@@ -1,14 +1,9 @@
 import sqlite3
 import folium
 import pandas as pd
-import webbrowser
-import os
 from config import db_path_normalized
 
-
-
-
-def test_map_in_browser():
+def generate_choropleth_map():
     with sqlite3.connect(db_path_normalized) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -18,7 +13,6 @@ def test_map_in_browser():
         """)
         data = cursor.fetchall()
         print(data)
-
 
 
     ## Pulls the country borders
@@ -39,4 +33,3 @@ def test_map_in_browser():
     ).add_to(m)
 
     return  m._repr_html_()
-
