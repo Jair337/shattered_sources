@@ -54,18 +54,27 @@ Implement the following specifications exactly:
         /* Master List Left Side Pane */
         .master-list { background-color: #22313f; border-right: 1px solid #2c3e50; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Sort Control Bar Panel */
-        .feed-controls { background-color: #111a22; padding: 10px 15px; border-bottom: 1px solid #2c3e50; display: flex; justify-content: space-between; align-items: center; }
-        .control-label { font-size: 12px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-        .sort-select { background-color: #2c3e50; color: #daf2f6; border: 1px solid #3498db; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; outline: none; }
+        /* Expanded Control Bar Panel */
+        .feed-controls { background-color: #111a22; padding: 12px 15px; border-bottom: 1px solid #2c3e50; display: flex; flex-direction: column; gap: 8px; }
+        .control-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .control-label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .sort-select { background-color: #2c3e50; color: #daf2f6; border: 1px solid #3498db; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; outline: none; flex: 1; max-width: 220px; }
         .sort-select:hover { background-color: #34495e; }
 
         /* Scrollable container for your cards */
         .cards-container { padding: 10px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; }
 
-        .event-card { background-color: #2c3e50; padding: 15px; margin-bottom: 10px; border-radius: 4px; cursor: pointer; transition: background 0.2s, border-left 0.1s; border-left: 4px solid transparent; }
+        /* Event Card with padding adjustments for the label strip */
+        .event-card { position: relative; background-color: #2c3e50; padding: 15px 15px 15px 22px; margin-bottom: 10px; border-radius: 4px; cursor: pointer; transition: background 0.2s; overflow: hidden; }
         .event-card:hover { background-color: #34495e; }
-        .event-card.active { background-color: #1f3a52; border-left: 4px solid #3498db; }
+        .event-card.active { background-color: #1f3a52; }
+
+        /* Color strip indicator reflecting card severity values */
+        .severity-indicator-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 8px; }
+        .indicator-high { background-color: #c0392b; }
+        .indicator-medium { background-color: #d35400; }
+        .indicator-low { background-color: #27ae60; }
+
         .card-meta { display: flex; justify-content: space-between; font-size: 11px; color: #bdc3c7; margin-bottom: 5px; }
         .card-title { font-weight: 600; font-size: 14px; margin: 0; color: #ffffff; }
 
@@ -83,6 +92,10 @@ Implement the following specifications exactly:
         .info-label { font-size: 11px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; }
         .info-value { font-size: 15px; font-weight: 600; margin-top: 4px; }
 
+        .button-container { padding: 15px; background-color: #111a22; border-top: 1px solid #2c3e50; text-align: center; }
+        .btn { display: inline-block; padding: 8px 20px; text-decoration: none; color: white; font-weight: bold; border-radius: 4px; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+
         /* Coordinate link hover state */
         #detCoords:hover { text-decoration: underline !important; color: #2980b9 !important; }
     </style>
@@ -90,7 +103,7 @@ Implement the following specifications exactly:
 <body>
 
     <header>
-        <h1>ING Intel feed</h1>
+        <h1>ING Intel Feed</h1>
         <div style="font-size: 13px; color: #95a5a6;">Total records: {{ events|length }}</div>
     </header>
 
@@ -99,13 +112,37 @@ Implement the following specifications exactly:
         <div class="master-list">
 
             <div class="feed-controls">
-                <span class="control-label">Order Pipeline</span>
-                <select class="sort-select" id="feedSorter" onchange="executePipelineSort()">
-                    <option value="date_desc" selected>Date: Newest First</option>
-                    <option value="date_asc">Date: Oldest First</option>
-                    <option value="sev_desc">Severity: Highest First</option>
-                    <option value="sev_asc">Severity: Lowest First</option>
-                </select>
+                <div class="control-row">
+                    <span class="control-label">Pipeline Sort</span>
+                    <select class="sort-select" id="feedSorter" onchange="executePipelineFilterAndSort()">
+                        <option value="date_desc" selected>Date: Newest First</option>
+                        <option value="date_asc">Date: Oldest First</option>
+                        <option value="sev_desc">Severity: Highest First</option>
+                        <option value="sev_asc">Severity: Lowest First</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <span class="control-label">Target Region</span>
+                    <select class="sort-select" id="countryFilter" onchange="executePipelineFilterAndSort()">
+                        <option value="all" selected>All Countries</option>
+                        {% set unique_countries = [] %}
+                        {% for event in events %}
+                            {% if event.country and event.country not in unique_countries %}
+                                {% if unique_countries.append(event.country) %}{% endif %}
+                                <option value="{{ event.country | lower }}">{{ event.country }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="control-row">
+                    <span class="control-label">Time Window</span>
+                    <select class="sort-select" id="timeFilter" onchange="executePipelineFilterAndSort()">
+                        <option value="all" selected>All Historic Data</option>
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                    </select>
+                </div>
             </div>
 
             <div class="cards-container" id="cardsContainer">
@@ -115,7 +152,15 @@ Implement the following specifications exactly:
                      data-event="{{ event | tojson | forceescape }}"
                      data-timestamp="{{ event.time_stamp or '' }}"
                      data-severity="{{ event.severity or 1 }}"
+                     data-country="{{ event.country or '' }}"
                      onclick="handleCardClick(this)">
+
+                    <div class="severity-indicator-strip
+                        {% if (event.severity|int) >= 4 %}indicator-high
+                        {% elif (event.severity|int) == 3 %}indicator-medium
+                        {% else %}indicator-low{% endif %}">
+                    </div>
+
                     <div class="card-meta">
                         <span>{{ event.source_name }}</span>
                         <span>{{ event.time_stamp.split('T')[0] if event.time_stamp else '' }}</span>
@@ -126,6 +171,10 @@ Implement the following specifications exactly:
                 {% else %}
                 <div style="text-align: center; padding: 40px; color: #7f8c8d;">No normalized events found in database.</div>
                 {% endfor %}
+            </div>
+
+            <div class="button-container">
+                 <a href="/" class="btn" style="background-color: #d35400;">Home</a>
             </div>
         </div>
 
@@ -168,51 +217,73 @@ Implement the following specifications exactly:
                 </div>
             </div>
         </div>
-        <div class="button-container">
-             <a href="/" class="btn" style="background-color: coral; border-color: black">Home</a>
-        </div>
 
     </div>
 
     <script>
-
-        function executePipelineSort() {
+        function executePipelineFilterAndSort() {
             const container = document.getElementById('cardsContainer');
             const cards = Array.from(container.getElementsByClassName('event-card'));
-            const sortMode = document.getElementById('feedSorter').value;
 
+            const sortMode = document.getElementById('feedSorter').value;
+            const countryMode = document.getElementById('countryFilter').value;
+            const timeMode = document.getElementById('timeFilter').value;
+
+            const now = new Date();
+
+            // --- 1. LIVE COMBINED FILTERING ENGINE (Country & Time Range) ---
+            cards.forEach(card => {
+                const cardCountry = (card.getAttribute('data-country') || '').toLowerCase();
+                const timestampStr = card.getAttribute('data-timestamp');
+
+                let countryMatches = (countryMode === 'all' || cardCountry === countryMode);
+                let timeMatches = true;
+
+                if (timestampStr && timeMode !== 'all') {
+                    const eventDate = new Date(timestampStr.replace(' ', 'T'));
+                    const diffTime = Math.abs(now - eventDate);
+                    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+                    if (timeMode === '24h' && diffDays > 1) timeMatches = false;
+                    else if (timeMode === '7d' && diffDays > 7) timeMatches = false;
+                    else if (timeMode === '30d' && diffDays > 30) timeMatches = false;
+                }
+
+                // Apply dynamic filters concurrently
+                if (countryMatches && timeMatches) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // --- 2. PIPELINE SORTING ENGINE ---
             cards.sort((cardA, cardB) => {
                 if (sortMode.startsWith('date_')) {
-                    // --- Date Parsing Sort ---
-                    const timeA = cardA.getAttribute('data-timestamp');
-                    const timeB = cardB.getAttribute('data-timestamp');
+                    const timeA = cardA.getAttribute('data-timestamp') || '';
+                    const timeB = cardB.getAttribute('data-timestamp') || '';
                     return sortMode === 'date_desc' ? timeB.localeCompare(timeA) : timeA.localeCompare(timeB);
                 } else {
-                    // --- Numerical Severity Sort ---
                     const sevA = parseInt(cardA.getAttribute('data-severity')) || 0;
                     const sevB = parseInt(cardB.getAttribute('data-severity')) || 0;
                     return sortMode === 'sev_desc' ? (sevB - sevA) : (sevA - sevB);
                 }
             });
 
-            // Re-append cards back into the DOM tracking the new structural array sequence
+            // Re-append elements to update positions in the DOM
             cards.forEach(card => container.appendChild(card));
         }
 
         function handleCardClick(element) {
             try {
-                // 1. Manage Active Visual Selected Card Styles
                 document.querySelectorAll('.event-card').forEach(card => card.classList.remove('active'));
                 element.classList.add('active');
 
-                // 2. Parse the JSON data safely straight out of the custom data-attribute
                 const eventData = JSON.parse(element.getAttribute('data-event'));
 
-                // 3. Clear Empty Placeholder Info State
                 document.getElementById('emptyState').style.display = 'none';
                 document.getElementById('detailContent').style.display = 'block';
 
-                // 4. Inject Values Directly into Document Context Nodes
                 document.getElementById('detSource').innerText = eventData.source_name + " // " + (eventData.event_type || "EVENT");
                 document.getElementById('detTitle').innerText = eventData.title || "Untitled Incident";
                 document.getElementById('detDesc').innerText = eventData.description || "No analytical narrative overview supplied.";
@@ -221,15 +292,12 @@ Implement the following specifications exactly:
                 document.getElementById('detOrigId').innerText = eventData.original_event_id;
                 document.getElementById('detCategory').innerText = eventData.category || "General Unassigned";
 
-                // Dynamic Metric Match Calculations
                 const confidenceVal = parseFloat(eventData.confidence) || 0;
                 document.getElementById('detConfidence').innerText = (confidenceVal * 100).toFixed(0) + "% confidence";
 
-                // Pulls 'time_stamp' matching your exact SQLite column name layout
                 document.getElementById('detTime').innerText = eventData.time_stamp || "Unknown Execution Window";
                 document.getElementById('detGeo').innerText = [eventData.city, eventData.region, eventData.country].filter(Boolean).join(", ");
 
-                // Dynamically generate the clickable coordinate anchor text and dynamic Folium URL path
                 const lat = eventData.latitude;
                 const lon = eventData.longitude;
                 const coordLink = document.getElementById('detCoords');
@@ -244,14 +312,12 @@ Implement the following specifications exactly:
                     coordLink.style.pointerEvents = "none";
                 }
 
-                // 5. Compute Dynamic Severity Badge UI & Grid metric text block
                 const sevBadge = document.getElementById('detSeverity');
                 const gridScore = document.getElementById('detGridSeverity');
 
-                sevBadge.className = "severity-badge"; // clear choices
+                sevBadge.className = "severity-badge";
                 const score = parseInt(eventData.severity) || 1;
 
-                // Set the text value inside your info-grid block cleanly
                 gridScore.innerText = "Tier " + score;
                 
                 if (score >= 4) {
