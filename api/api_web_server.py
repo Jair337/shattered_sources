@@ -12,6 +12,7 @@ from services.stats_services.macro_stats_service import macro_stats_service
 from services.stats_services.time_charts_service import time_charts_event_count_memory, time_charts_stacked_volumes
 from services.list_events_service import list_events_service
 from services.show_location_map_service import show_location_map_service
+from services.stats_services.custom_time_charts_service import custom_time_chart_service
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -73,7 +74,13 @@ def macro_stats():
 def time_charts():
     return render_template("time_charts.html", time_chart_event_count=time_charts_event_count_memory(), time_chart_stacked_volumes=time_charts_stacked_volumes())
 
-
+@app.route('/stats/time_charts_custom', methods=['POST', 'GET'])
+def time_charts_custom():
+    chosen_country = None
+    if request.method == 'POST':
+        chosen_country = request.form['country']
+    data_country_selected = custom_time_chart_service(chosen_country)
+    return render_template("time_charts_custom.html", chart_data=data_country_selected[0], countries=data_country_selected[1], selected_country=data_country_selected[2])
 
 @app.route('/test_folium')
 def test_folium():

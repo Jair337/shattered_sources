@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charts</title>
+</head>
+<body>
+
+    <form method="POST">
+        <select name="country">
+            {% for country in countries %}
+                <option value="{{ country }}" {% if country == selected_country %}selected{% endif %}>
+                    {{ country }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit">Generate Graph</button>
+    </form>
+
+    <br>
+
+    <img src="data:image/png;base64,{{ chart_data }}" alt="Graph">
+
+</body>
+</html>

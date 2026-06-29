@@ -44,6 +44,7 @@ def time_charts_event_count_service():
     return fig
 
 def time_charts_event_count_memory():
+    ## Converts the image into B64 for rendering into flask endpoint
     fig = time_charts_event_count_service()
     img_buffer_event_count = io.BytesIO()
     fig.savefig(img_buffer_event_count, format='png')
