@@ -162,7 +162,8 @@ def generate_bulk_dataset():
 
     for i in range(1, total_records + 1):
         # 1. Select geography assets
-        country_obj = COUNTRY_POOL[(i % len(COUNTRY_POOL))]
+        #  Replace with this
+        country_obj = random.choice(COUNTRY_POOL)
         city_obj = random.choice(country_obj["cities"])
 
         # 2. Select contextual telemetry patterns
@@ -176,7 +177,7 @@ def generate_bulk_dataset():
         updated_dt = published_dt + timedelta(hours=random.randint(1, 6))
         start_dt = published_dt - timedelta(hours=random.randint(1, 4))
 
-        evt_id = f"seerist_evt_{str(i).zfill(6)}"
+        evt_id = f"seerist_evt_p2_{str(i).zfill(6)}"
 
         # 4. Construct event dictionary
         event_node = {
@@ -247,7 +248,7 @@ def generate_bulk_dataset():
     }
 
     # Write out data directly as a clean formatted JSON asset
-    with open("test_data_3000.json", "w", encoding="utf-8") as out_file:
+    with open("test_data_3000_p2.json", "w", encoding="utf-8") as out_file:
         json.dump(dataset_wrapper, out_file, indent=2, ensure_ascii=False)
 
     print("Successfully generated 'test_data_3000.json' containing 3,000 contextual validation rows.")

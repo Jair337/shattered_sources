@@ -1,9 +1,13 @@
 import json
 import requests
+import os
 
 # Your local Flask endpoint URL
 url = "http://127.0.0.1:5000/normalize_ingest_seerist"
-file_path = "../synthetic_seerist_events.json"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# 2. Combine that absolute directory path with your filename asset
+file_path = os.path.join(current_dir, "test_data_3000_p2.json")
 
 print(f"📖 Opening local file: {file_path}...")
 
@@ -42,7 +46,7 @@ try:
         print(counter)
 
     else:
-        print("\n✨ All 1,000 events successfully loaded from file, normalized, and stored in both databases!")
+        print("\n✨ All 3,000 events successfully loaded from file, normalized, and stored in both databases!")
 
 except FileNotFoundError:
     print(f"\n❌ File Not Found! Make sure '{file_path}' is saved in the exact same directory as this test script.")
