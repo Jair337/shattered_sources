@@ -32,14 +32,14 @@ def custom_time_chart_service(selected_country):
         ax.set_title('Event count daily', color='white')
         ax.set_xlabel('Date', color='white')
         ax.set_ylabel('Event Count', color='white')
-        ax.tick_params(axis='x', rotation=70, colors='white')
+        ax.tick_params(axis='x', rotation=45, colors='white')
+        ax.tick_params(axis='y', colors='white', labelleft=True)
+
         for spine in ax.spines:
             ax.spines[spine].set_visible(False)
-        ax.xaxis.set_major_locator(plt.MaxNLocator(15))
 
         fig.tight_layout()
 
-        ##
         img_buffer_event_count = io.BytesIO()
         fig.savefig(img_buffer_event_count, format='png')
         img_buffer_event_count.seek(0)
