@@ -30,10 +30,19 @@ def render_map_events():
             else:
                 pin_color = "green"
 
-            custom_popup = folium.Popup(
-                html=f"<b>{title}</b>",
-                max_width=450)
+            ## Create simple HTML strings for the popup content, improves speed.
+            popup_html = f'<div style="white-space: nowrap; font-weight: bold;">{title}</div>'
 
-            folium.Marker(location=[float(lat), float(lon)], tooltip='Click for more info', popup=custom_popup, icon=folium.Icon(color=pin_color)).add_to(marker_cluster)
+            ## Use CircleMarker instead of Marker. It utilizes the canvas and renders instantly.
+            folium.CircleMarker(
+                location=[float(lat), float(lon)],
+                radius=6,
+                color=pin_color,
+                fill=True,
+                fill_color=pin_color,
+                fill_opacity=0.7,
+                tooltip='Click for more info',
+                popup=popup_html
+            ).add_to(marker_cluster)
 
     return m._repr_html_()
