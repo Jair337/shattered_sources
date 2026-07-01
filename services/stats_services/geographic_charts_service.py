@@ -25,7 +25,7 @@ def country_chart_service():
         ax.set_facecolor('#111e2e')
         ax.bar(cities, counts, color='#1f77b4')
         ax.grid(color='gray', linestyle='--', linewidth=0.3)
-        ax.set_title('Distribution of events', color='white')
+        ax.set_title('Top 10 cities by event count', color='white')
         ax.set_xlabel('City', color='white')
         ax.set_ylabel('Count', color='white')
         ax.tick_params(axis='x', rotation=45, colors='white')
@@ -42,5 +42,3 @@ def country_chart_service():
     plt.close(fig)
     chart_b64 = base64.b64encode(img_buffer_event_count.getvalue()).decode('utf_8')
     return chart_b64
-
-country_chart_service()

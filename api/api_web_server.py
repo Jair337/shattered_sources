@@ -15,6 +15,7 @@ from services.show_location_map_service import show_location_map_service
 from services.stats_services.custom_time_charts_service import custom_time_chart_service
 from services.map_choropleth_service import generate_choropleth_map
 from services.stats_services.distribution_charts_service import categories_distribution_chart_service
+from services.stats_services.geographic_charts_service import country_chart_service
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -89,6 +90,11 @@ def time_charts_custom():
 @app.route('/stats/distribution_charts')
 def distribution_charts():
     return render_template("distribution_charts.html", category_chart = categories_distribution_chart_service())
+
+
+@app.route('/stats/geographic_charts')
+def geographic_charts():
+    return render_template("geographic_charts.html", geographic_chart = country_chart_service())
 
 @app.route('/test_folium')
 def test_folium():
