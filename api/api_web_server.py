@@ -96,6 +96,10 @@ def distribution_charts():
 def geographic_charts():
     return render_template("geographic_charts.html", geographic_chart = country_chart_service())
 
+@app.route('/machine_learning')
+def machine_learning():
+    return render_template("machine_learning.html")
+
 @app.route('/test_folium')
 def test_folium():
     m = folium.Map(location=[20, 0], zoom_start=2, tiles='CartoDB.Positron')
