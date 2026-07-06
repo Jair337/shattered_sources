@@ -71,11 +71,14 @@ def ML_demo_random_forest():
     recall = recall_score(y_test, integer_predictions, average='weighted')
     f1 = f1_score(y_test, integer_predictions, average='weighted')
 
-    return mae, r2, residuals, cm, accuracy, precision, recall, f1
+    print(predictions)
+    print(y_test)
+
+    return mae, r2, residuals, cm, accuracy, precision, recall, f1, predictions, y_test
 
 
 
 
-
+    
 
 

@@ -16,6 +16,7 @@ from services.stats_services.custom_time_charts_service import custom_time_chart
 from services.map_choropleth_service import generate_choropleth_map
 from services.stats_services.distribution_charts_service import categories_distribution_chart_service
 from services.stats_services.geographic_charts_service import country_chart_service
+from services.machine_learning_service import ML_demo_random_forest
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -99,6 +100,25 @@ def geographic_charts():
 @app.route('/machine_learning')
 def machine_learning():
     return render_template("machine_learning.html")
+
+@app.route('/train', methods=['GET'])
+def train_model():
+    mae, r2, residuals, cm, accuracy, precision, recall, f1, predictions, y_test = ML_demo_random_forest()
+    print(r2)
+    return jsonify({
+        "mae": mae,
+        "r2": round(r2, 2),
+        "predictions": [
+            {"id": i + 1, "actual": round(act, 2), "predicted": round(pred, 2)}
+            for i, (act, pred) in enumerate(zip(y_test.tolist(), predictions.tolist()))
+        ]
+
+    })
+
+@app.route('/view_test_data')
+def view_test_data():
+    return render_template("view_test_data.html")
+
 
 @app.route('/test_folium')
 def test_folium():
