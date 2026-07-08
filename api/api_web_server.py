@@ -17,6 +17,7 @@ from services.map_choropleth_service import generate_choropleth_map
 from services.stats_services.distribution_charts_service import categories_distribution_chart_service
 from services.stats_services.geographic_charts_service import country_chart_service
 from services.machine_learning_service import ML_demo_random_forest
+from services.ask_service import generate_query, get_db_scheme
 
 app = Flask(__name__, template_folder='./html_templates')
 
@@ -120,6 +121,28 @@ def view_test_data():
     return render_template("view_test_data.html")
 
 
+@app.route('/ask_llm')
+def ask_llm():
+    return render_template("ask_llm.html")
+
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    user_question = data.get("question", "")
+
+    sql_query = generate_query(user_question, get_db_scheme())
+    print(sql_query)
+
+    with sqlite3.connect(db_path_normalized) as conn:
+         cursor = conn.cursor()
+         cursor.execute(sql_query)
+         results = cursor.fetchall()
+         print(results)
+
+    return jsonify({"results": results})
+
+       
 @app.route('/test_folium')
 def test_folium():
     m = folium.Map(location=[20, 0], zoom_start=2, tiles='CartoDB.Positron')
