@@ -38,16 +38,7 @@ def generate_query(question, schema):
                  'temperature': 0.0,
                  'think': False,}
     )
-
     return response['message']['content']
 
 
-def retrieve_events_from_db():
-    question = input("Please enter your question: ")
-    sql_query = generate_query(question, get_db_scheme())
-    with sqlite3.connect(db_path_normalized) as conn:
-        cursor = conn.cursor()
-        print(sql_query)
-        cursor.execute(sql_query)
-        return cursor.fetchall()
 

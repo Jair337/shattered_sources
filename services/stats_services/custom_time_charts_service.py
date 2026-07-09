@@ -3,7 +3,7 @@ import base64
 import io
 import matplotlib.pyplot as plt
 from config import db_path_normalized
-from flask import request
+
 
 
 def custom_time_chart_service(selected_country):

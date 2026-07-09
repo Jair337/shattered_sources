@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt  # <-- Added for plotting
 
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
@@ -9,7 +8,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.tree import plot_tree  # <-- Added to visualize the tree
 from sklearn.metrics import mean_absolute_error, r2_score, confusion_matrix, accuracy_score, precision_score, \
     recall_score, f1_score
 
@@ -51,31 +49,6 @@ def ML_demo_random_forest():
     ## Execute Training
     model.fit(X_train, y_train)
 
-    ## --- VISUALIZE ONE TREE ---
-    # 1. Pull the trained regressor out of the pipeline
-    rf_regressor = model.named_steps['regressor']
-
-    # 2. Extract the first tree (index 0) from the forest
-    single_tree = rf_regressor.estimators_[0]
-
-    # 3. Get the feature names out of the preprocessor so the tree is readable
-    feature_names = model.named_steps['preprocessor'].get_feature_names_out()
-
-    # 4. Plot the tree
-    plt.figure(figsize=(20, 10))  # Set a large figure size so it's readable
-    plot_tree(
-        single_tree,
-        max_depth=3,  # Limiting depth to 3 in the visual so it doesn't look like a giant blur
-        feature_names=feature_names,
-        filled=True,
-        rounded=True,
-        fontsize=10
-    )
-    plt.title("Visualizing Tree #1 from the Random Forest (Max Depth Shown: 3)")
-    plt.savefig('random_forest_tree.png', bbox_inches='tight', dpi=300)  # Saves the image to your directory
-    plt.show()  # Displays the image
-    ## ---------------------------
-
     ## List of predicted severities
     predictions = model.predict(X_test)
 
@@ -91,8 +64,5 @@ def ML_demo_random_forest():
     precision = precision_score(y_test, integer_predictions, average='weighted')
     recall = recall_score(y_test, integer_predictions, average='weighted')
     f1 = f1_score(y_test, integer_predictions, average='weighted')
-
-    print(predictions)
-    print(y_test)
 
     return mae, r2, residuals, cm, accuracy, precision, recall, f1, predictions, y_test

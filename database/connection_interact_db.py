@@ -1,8 +1,7 @@
 import sqlite3
 import json
-import os
 
-#imports the paths from config
+## imports the paths from config
 from config import *
 
 
@@ -126,6 +125,3 @@ def create_normalized_db():
         longitude FLOAT)''')
     conn.commit()
     conn.close()
-
-
-## MUST WRITE CODE THAT PULLS NEW ALERTS EVERY N SECONDS AND ADDS THEM TO DB --> NEW ALERTS -- PLOTTED AGAINST MODEL --> ADDED TO MAIN DB WITH EITHER REQUIRES ATTENTION OR NOT
