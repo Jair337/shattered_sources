@@ -35,6 +35,7 @@ def time_charts_event_count_service():
         ax.set_xlabel('Date', color='white')
         ax.set_ylabel('Event Count', color='white')
         ax.tick_params(axis='x', rotation=70, colors='white')
+        ax.tick_params(axis='y', colors='white', labelleft=True)
         for spine in ax.spines:
             ax.spines[spine].set_visible(False)
         ax.xaxis.set_major_locator(plt.MaxNLocator(15))

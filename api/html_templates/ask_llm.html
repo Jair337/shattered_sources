@@ -83,6 +83,7 @@ Auto-Scroll: Force the chat window to scroll to the very bottom whenever a new u
             padding: 10px;
             border-radius: 8px;
             max-width: 80%;
+            word-wrap: break-word;
         }
         .user-message {
             background: #e1f5fe;
@@ -151,38 +152,56 @@ Auto-Scroll: Force the chat window to scroll to the very bottom whenever a new u
         chatBox.scrollTop = chatBox.scrollHeight;
 
         try {
-            // Send request to Flask backend
-            const response = await fetch('/chat', {
+            // NOTE: Changed URL to an absolute URL pointing to your local Flask backend.
+            // If your Flask port is different (like 8000), update it here!
+            const response = await fetch('http://127.0.0.1:5000/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ question: question })
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
 
             // Remove loading message
-            document.getElementById(loadingId).remove();
-
-            // Build response based on "results" key sent by Python
-            if (!data.results || data.results.length === 0) {
-                chatBox.innerHTML += `<div class="message bot-message">No matching events found.</div>`;
-            } else {
-                let replyHtml = "Here is what I found:<br><ul style='margin: 5px 0; padding-left: 20px;'>";
-                data.results.forEach(row => {
-                    // Falls back to generic mapping if structure varies
-                    const name = row[0] || "Unknown Event";
-                    const desc = row[1] || "No description provided.";
-                    const time_stamp = row[2] || "No timestamp provided.";
-                    replyHtml += `<li><strong>${name}</strong>: ${desc}, ${time_stamp}</li>`;
-                });
-                replyHtml += "</ul>";
-                chatBox.innerHTML += `<div class="message bot-message">${replyHtml}</div>`;
-            }
-
-        } catch (error) {
             if (document.getElementById(loadingId)) {
                 document.getElementById(loadingId).remove();
             }
-            chatBox.innerHTML += `<div class="message bot-message">Error connecting to server.</div>`;
+
+            // 1. Check if backend threw an internal error
+            if (data.error) {
+                chatBox.innerHTML += `<div class="message bot-message" style="color: red;"><strong>Error:</strong> ${data.error}</div>`;
+            }
+            // 2. Handle structured Database Outputs (from SQL execution)
+            else if (data.is_sql) {
+                if (!data.results || data.results.length === 0) {
+                    chatBox.innerHTML += `<div class="message bot-message">No matching events found in the database.</div>`;
+                } else {
+                    let replyHtml = "Here is what I found:<br><ul style='margin: 5px 0; padding-left: 20px;'>";
+                    data.results.forEach(row => {
+                        const name = row[0] || "Unknown Event";
+                        const desc = row[1] || "No description provided.";
+                        const time_stamp = row[2] || "No timestamp provided.";
+                        replyHtml += `<li><strong>${name}</strong>: ${desc} <br><small style="color: #666;">${time_stamp}</small></li>`;
+                    });
+                    replyHtml += "</ul>";
+                    chatBox.innerHTML += `<div class="message bot-message">${replyHtml}</div>`;
+                }
+            }
+            // 3. Handle General Conversational Text Output (Greetings, general talk)
+            else {
+                chatBox.innerHTML += `<div class="message bot-message">${data.results}</div>`;
+            }
+
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            if (document.getElementById(loadingId)) {
+                document.getElementById(loadingId).remove();
+            }
+            chatBox.innerHTML += `<div class="message bot-message" style="color: red;">Error connecting to the server. Make sure Flask is running!</div>`;
         }
 
         chatBox.scrollTop = chatBox.scrollHeight;

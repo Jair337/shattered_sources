@@ -15,20 +15,26 @@ def get_db_scheme():
 
 def generate_query(question, schema):
     ## Defines the prompt that is being sent to the LLM.
-    prompt = f"""You are an expert at making SQL queries. Given the following SQLite database schema, 
-                  write a valid SQL query that answers the user's question and returns the event(s) name, description and time_stamp.
-                  Return ONLY the raw SQL query. Do not wrap it in markdown code blocks, do not explain. 
-                  You are a helpful assistant. Do not use chain-of-thought. Respond directly.
+    prompt = f"""You are an expert assistant with two modes of response:
 
-                   Schema:
-                   {schema}
+1. CONVERSATIONAL MODE: If the user greets you, says hello, or asks a general non-database question, respond naturally, warmly, and conversationally. Do NOT generate any SQL.
+2. SQL GENERATION MODE: If the user asks a question that requires data from the database, write a valid SQLite query based on the schema below to answer the question. The query must return the event(s) name, description, and time_stamp.
 
-                   Question:
-                   {question}                  
-                   """
+For SQL GENERATION:
+- Return ONLY the raw SQL query.
+- Do NOT wrap it in markdown code blocks (no ```).
+- Do NOT explain the query.
+- Do not use chain-of-thought. Respond directly.
+
+Schema:
+{schema}
+
+Question:
+{question}
+"""
     ## Generates the response from the LLM using the prompt.
     response = ollama.chat(
-        model='gemma4:e2b',
+        model='gemma2:2b',
         messages=[
             {'role': 'system', 'content': prompt},
         ],
@@ -36,7 +42,9 @@ def generate_query(question, schema):
         ## This makes the LLM faster
         options={'num_predict': 512,
                  'temperature': 0.0,
-                 'think': False,}
+                 'think': False,
+                 'num_ctx': 2048,
+                 'num_thread': 4}
     )
     return response['message']['content']
 

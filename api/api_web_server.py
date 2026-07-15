@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from pathlib import Path
 
 ## All service or other modules imports
 from database.connection_interact_db import create_load_test_data_seerist
@@ -137,19 +138,42 @@ def ask_llm():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.json
+    data = request.json or {}
     user_question = data.get("question", "")
 
+    ## 1. Ask the LLM to write the SQL query or reply
     sql_query = generate_query(user_question, get_db_scheme())
-    print(sql_query)
 
-    with sqlite3.connect(db_path_normalized) as conn:
-         cursor = conn.cursor()
-         cursor.execute(sql_query)
-         results = cursor.fetchall()
-         print(results)
+    ## 2. Clean up markdown formatting
+    clean_sql = sql_query.strip()
+    if clean_sql.startswith("```"):
+        lines = clean_sql.splitlines()
+        if lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].startswith("```"):
+            lines = lines[:-1]
+        clean_sql = "\n".join(lines).strip()
 
-    return jsonify({"results": results})
+    print(clean_sql)
+
+    ## 3. If it's a SQL query, query the database
+    if clean_sql.upper().startswith("SELECT"):
+        db_uri = Path(db_path_normalized).resolve().as_uri() + "?mode=ro"
+
+        with sqlite3.connect(db_uri, uri=True) as conn:
+            cursor = conn.cursor()
+            cursor.execute(clean_sql)
+            results = cursor.fetchall()
+
+
+        ## We format the database rows into a flat list of dicts or pass them back
+        return jsonify({"results": results, "is_sql": True})
+
+    else:
+        ## 4. If it's conversational, pass the string back in the results
+        return jsonify({"results": clean_sql, "is_sql": False})
+
+
 
 
 #########################################################################################################################################################################################################################
