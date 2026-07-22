@@ -32,7 +32,7 @@ Dit is een volledige gids het project aan de praat te krijgen.
 
 ## Systeemvereisten
 
-- Een Windows, Mac of Linux computer
+- Een Windows, Mac of Linux computer met tenmiste 8GB RAM
 - Internettoegang (om Python en bibliotheken te downloaden)
 - Een moderne webbrowser (Chrome, Firefox, Safari of Edge)
 
@@ -139,6 +139,48 @@ Nu moeten we alle bibliotheken installeren die dit project nodig heeft. We gebru
    ```
 
    Dit zal alles downloaden en installeren. 
+
+---
+### Stap 4: Ollama en Gemma2 model installeren
+
+Dit project gebruikt het **Gemma2:2b** LLM model. Ollama is een tool waarmee je dit model lokaal kunt uitvoeren.
+
+#### **Stap 1: Ollama downloaden en installeren**
+
+1. Ga naar https://ollama.com/download
+2. Download de versie voor jouw besturingssysteem (Windows, Mac of Linux)
+3. Open het bestand en volg de aanwijzingen
+4. Nadat de installatie compleet is, start je computer opnieuw op
+
+**Controleer of Ollama correct is geïnstalleerd:**
+- **Windows:** Open opdrachtprompt en typ: `ollama --version`
+- **Mac/Linux:** Open Terminal en typ: `ollama --version`
+- Je zou een versienummer moeten zien
+
+#### **Stap 2: Het Gemma2:2b model downloaden**
+
+Dit model kun je online van het Ollama-modellenbibliotheek downloaden. 
+
+1. **Download het model** via de modelenpagina: https://ollama.com/library/gemma2:2b
+   
+   Of gebruik je opdrachtlijn:
+   ```
+   ollama pull gemma2:2b
+   ```
+
+2. **Controleer of het model is gedownload:**
+   ```
+   ollama list
+   ```
+   Je zou `gemma2:2b` in de lijst moeten zien.
+
+#### **Stap 3: Ollama starten**
+
+Voordat je de applicatie start, moet je Ollama starten zodat het model beschikbaar is, 
+controleer nogmaals dat je het model hebt gedownload en het zichtbaar is in de lijst van Ollama.
+
+
+
 
 ---
 
