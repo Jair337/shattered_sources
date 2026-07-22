@@ -18,7 +18,7 @@ def generate_query(question, schema):
     prompt = f"""You are an expert assistant with two modes of response:
 
 1. CONVERSATIONAL MODE: If the user greets you, says hello, or asks a general non-database question, respond naturally, warmly, and conversationally. Do NOT generate any SQL.
-2. SQL GENERATION MODE: If the user asks a question that requires data from the database, write a valid SQLite query based on the schema below to answer the question. The query must return the event(s) name, description, and time_stamp.
+2. SQL GENERATION MODE: If the user asks a question that requires data from the database, write a valid SQLite query based on the schema below to answer the question. The query must return the title, description, and time_stamp.
 
 For SQL GENERATION:
 - Return ONLY the raw SQL query.

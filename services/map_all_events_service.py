@@ -1,17 +1,15 @@
 import sqlite3
 import folium
 from folium.plugins import MarkerCluster
-
 from config import db_path_normalized
-
 
 def render_map_events():
     with sqlite3.connect(db_path_normalized) as conn:
         ## DB connection that pulls all events and translates them into a dict
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM events_normalized ORDER BY time_stamp DESC")
-        columns = [desc[0] for desc in cursor.description]
         raw_rows = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
         events = [dict(zip(columns, row)) for row in raw_rows]
 
         ## Makes the map and goes through every event and adds a marker to the map with a color based on severity. Red = 4+, Yellow = 3, Green = 1
@@ -44,5 +42,4 @@ def render_map_events():
                 tooltip='Click for more info',
                 popup=popup_html
             ).add_to(marker_cluster)
-
     return m._repr_html_()
