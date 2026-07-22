@@ -1,6 +1,6 @@
 # Shattered Sources - Gebruikershandleiding
 
-## Welkom! 
+# Welkom! 
 
 Dit is een volledige gids het project aan de praat te krijgen.
 ---
